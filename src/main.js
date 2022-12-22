@@ -1,9 +1,12 @@
-import TripPresenter from './presenter.js';
-const headerElement = document.querySelector('.trip-controls');
-const tripEventsElement = document.querySelector('.trip-events');
-const tripPresenter = new TripPresenter({
-  boardContainer: tripEventsElement,
-  filterContainer: headerElement,
-});
+import { render } from './render.js';
+import ListFiltersView from './view/list-filters-view.js';
+import TripListPresenter from './presenter/trip-list-presenter.js';
 
-tripPresenter.init();
+const filterContainerElement = document.querySelector('.trip-controls__filters');
+const tripEventsContainerElement = document.querySelector('.trip-events');
+
+const tripListPresenter = new TripListPresenter(tripEventsContainerElement);
+
+render(new ListFiltersView(), filterContainerElement);
+
+tripListPresenter.init();
