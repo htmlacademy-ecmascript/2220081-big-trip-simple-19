@@ -3,11 +3,13 @@ import TripListView from '../view/trip-list-view.js';
 import ListSortView from '../view/list-sort-view.js';
 import EditPointView from '../view/edit-point-view.js';
 import TripPointView from '../view/point-view.js';
+import ListEmptyView from '../view/trip-list-empty-view.js';
 import { isEscape } from '../utils.js';
 
 export default class TripListPresenter {
   #tripEventsContainer = null;
   #tripListComponent = new TripListView();
+  #tripEmptyListComponent = new ListEmptyView();
   #pointsModel = null;
 
   constructor({tripEventsContainer, pointsModel}) {
@@ -22,12 +24,17 @@ export default class TripListPresenter {
 
     const destinations = [...this.#pointsModel.destinations];
 
-    render(new ListSortView(), this.#tripEventsContainer);
+    if (listPoints.length) {
 
-    render(this.#tripListComponent, this.#tripEventsContainer);
+      render(new ListSortView(), this.#tripEventsContainer);
 
-    for (let i = 0; i < listPoints.length; i++) {
-      this.#renderTripPoint(listPoints[i], destinations, offersByType);
+      render(this.#tripListComponent, this.#tripEventsContainer);
+
+      for (let i = 0; i < listPoints.length; i++) {
+        this.#renderTripPoint(listPoints[i], destinations, offersByType);
+      }
+    } else {
+      render(this.#tripEmptyListComponent, this.#tripEventsContainer);
     }
   }
 

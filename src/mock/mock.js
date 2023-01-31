@@ -207,7 +207,7 @@ const makeRandomPoint = (_, index) => {
   };
 };
 
-const mockPoints = Array.from({length: POINTS_COUNT}, makeRandomPoint);
+const mockPoints = Array.from({length: randomInt(0, POINTS_COUNT)}, makeRandomPoint);
 
 export {mockOffers, mockDestinations, mockOffersByType, mockPoints};
 
