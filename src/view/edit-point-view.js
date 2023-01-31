@@ -15,15 +15,15 @@ function selectDestinationListTemplate(destinations) {
   return destinations.map((destination) => `<option value="${destination.name}"></option>`).join('');
 }
 
-function createOffersTemplate(pointOffers, offersByType, offerType) {
+function createOffersTemplate(pointOffers, offersByType, offerType, pointId) {
   const typeOffers = offersByType.find(({type}) => type === offerType);
   return (typeOffers)
     ? typeOffers.offers.map(({id, title, price}) => {
       const checked = (pointOffers.includes(id)) ? 'checked' : '';
       return `
         <div class="event__offer-selector">
-          <input class="event__offer-checkbox  visually-hidden" id="event-offer-${id}" type="checkbox" name="event-offer-${id}" ${checked}>
-          <label class="event__offer-label" for="event-offer-${id}">
+          <input class="event__offer-checkbox  visually-hidden" id="event-offer-${id}-${pointId}" type="checkbox" name="event-offer-${id}-${pointId}" ${checked}>
+          <label class="event__offer-label" for="event-offer-${id}-${pointId}">
             <span class="event__offer-title">${title}</span>
             &plus;&euro;&nbsp;
             <span class="event__offer-price">${price}</span>
@@ -116,7 +116,7 @@ function createEditPointTemplate(point, offersByType, destinations) {
             <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
             <div class="event__available-offers">
-            ${createOffersTemplate(offers, offersByType, type)}
+            ${createOffersTemplate(offers, offersByType, type, id)}
             </div>
           </section>
 
@@ -132,26 +132,27 @@ function createEditPointTemplate(point, offersByType, destinations) {
 }
 
 export default class EditPointView {
+  #element = null;
 
-  constructor(point, offersByType, destinations) {
+  constructor(point, destinations, offersByType) {
     this.point = point;
     this.offersByType = offersByType;
     this.destinations = destinations;
   }
 
-  getTemplate() {
+  get template() {
     return createEditPointTemplate(this.point, this.offersByType, this.destinations);
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
     }
 
-    return this.element;
+    return this.#element;
   }
 
   removeElement() {
-    this.element = null;
+    this.#element = null;
   }
 }

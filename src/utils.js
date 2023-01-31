@@ -18,6 +18,10 @@ function getRandomBoolean() {
   return Math.random() > 0.5;
 }
 
+function isEscape(evt) {
+  return evt.key === 'Escape' || evt.key === 'Esc';
+}
+
 // https://github.com/you-dont-need/You-Dont-Need-Lodash-Underscore#_random
 const randomInt = (a = 1, b = 0) => {
   const lower = Math.ceil(Math.min(a, b));
@@ -26,4 +30,4 @@ const randomInt = (a = 1, b = 0) => {
 };
 
 
-export {getRandomArrayElement, humanizeFormatDate , randomInt, getRandomArrayElements, getRandomBoolean};
+export {getRandomArrayElement, humanizeFormatDate , randomInt, getRandomArrayElements, getRandomBoolean, isEscape};

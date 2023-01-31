@@ -2,20 +2,20 @@ import { mockDestinations, mockOffersByType, mockPoints } from '../mock/mock.js'
 
 
 export default class PointsModel {
-  points = mockPoints;
-  destinatioins = mockDestinations;
-  offersByType = mockOffersByType;
+  #points = mockPoints;
+  #destinatioins = mockDestinations;
+  #offersByType = mockOffersByType;
 
-  getPoints(){
-    return this.points;
+  get points(){
+    return this.#points;
   }
 
-  getDestinations(){
-    return this.destinatioins;
+  get destinations(){
+    return this.#destinatioins;
   }
 
-  getOffersByType(){
-    return this.offersByType;
+  get offersByType(){
+    return this.#offersByType;
   }
 }
 
