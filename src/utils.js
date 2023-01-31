@@ -1,23 +1,29 @@
 import dayjs from 'dayjs';
 
-const DATE_FORMAT = 'MMM DD';
-const TIME_FORMAT = 'HH:MM';
-const TIME_FULL_FORMAT = 'DD/MM/YY HH MM';
 
 const getRandomArrayElement = function(items) {
   return (items[Math.floor(Math.random() * items.length)]);
 };
 
-function humanizeTripDate(dueDate) {
-  return dueDate ? dayjs(dueDate).format(DATE_FORMAT) : '';
+
+function humanizeFormatDate(date, format) {
+  return dayjs(date).format(format);
 }
 
-function humanizeTripTime(dueDate) {
-  return dueDate ? dayjs(dueDate).format(TIME_FORMAT) : '';
+function getRandomArrayElements(arr) {
+  return arr.filter(() => getRandomBoolean());
 }
 
-function humanizeTripTimeAndDate(dueDate) {
-  return dueDate ? dayjs(dueDate).format(TIME_FULL_FORMAT) : '';
+function getRandomBoolean() {
+  return Math.random() > 0.5;
 }
 
-export {getRandomArrayElement, humanizeTripDate, humanizeTripTime, humanizeTripTimeAndDate};
+// https://github.com/you-dont-need/You-Dont-Need-Lodash-Underscore#_random
+const randomInt = (a = 1, b = 0) => {
+  const lower = Math.ceil(Math.min(a, b));
+  const upper = Math.floor(Math.max(a, b));
+  return Math.floor(lower + Math.random() * (upper - lower + 1));
+};
+
+
+export {getRandomArrayElement, humanizeFormatDate , randomInt, getRandomArrayElements, getRandomBoolean};

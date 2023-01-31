@@ -1,16 +1,37 @@
-// Тип
-// Пункт назначения
-// Дата и время начала события
-// Дата и время окончания события.
-// Стоимость.
-// Дополнительные опции offers
+import { getRandomArrayElement, randomInt, getRandomArrayElements } from '../utils.js';
+import { POINT_TYPES } from '../const.js';
 
-import { TYPES } from '../const.js';
-import { getRandomArrayElement } from '../utils.js';
+const POINT_MIN_BASE_PRICE = 0;
+const POINT_MAX_BASE_PRICE = 5000;
+const POINTS_COUNT = 5;
+const DESTINATION_MIN_PHOTOS_COUNT = 0;
+const DESTINATION_MAX_PHOTOS_COUNT = 5;
+const TIME_MIN_OFFSET = 60 * 60 * 24 * 3 * 1000;
+const TIME_MAX_OFFSET = 60 * 60 * 24 * 7 * 1000;
+const DESCRIPTION_SENTENCES = [
+  'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+  'Cras aliquet varius magna, non porta ligula feugiat eget.',
+  'Fusce tristique felis at fermentum pharetra.',
+  'Aliquam id orci ut lectus varius viverra.',
+  'Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante.',
+  'Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum.',
+  'Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui.',
+  'Sed sed nisi sed augue convallis suscipit in sed felis. Aliquam erat volutpat. Nunc fermentum tortor ac porta dapibus.',
+  'In rutrum ac purus sit amet tempus.'
+];
 
-const randomPic = () => Math.random();
+const randomPicSrc = () => `https://loremflickr.com/248/152?random=${Math.random()}`;
 
-//Моки типов маршрутов
+function generateDestinationPictures() {
+  return Array.from(
+    {length: randomInt(DESTINATION_MIN_PHOTOS_COUNT, DESTINATION_MAX_PHOTOS_COUNT) },
+    () => ({
+      src: randomPicSrc(),
+      description: getRandomArrayElements(DESCRIPTION_SENTENCES)
+    })
+  );
+}
+
 
 const mockOffers = [
   {
@@ -75,7 +96,7 @@ const mockOffers = [
   }
 ];
 
-const offersByTypes = [
+const mockOffersByType = [
   {
     'type': 'taxi',
     'offers': [
@@ -144,161 +165,49 @@ const offersByTypes = [
   },
 ];
 
-//Моки пункта назначения
-
-const mockDestination = [
+const mockDestinations = [
   {
     id: 1,
-    description: 'Chamonix, is a beautiful city, a true asian pearl, with crowded streets.',
+    description: getRandomArrayElements(DESCRIPTION_SENTENCES),
     name: 'Chamonix',
-    pictures: [
-      {
-        src: `https://loremflickr.com/248/152?random=${randomPic}`,
-        description: 'Chamonix parliament building'
-      }
-    ]
+    pictures: generateDestinationPictures()
   },
   {
     id: 2,
-    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum. Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui. Sed sed nisi sed augue convallis suscipit in sed felis.',
+    description: getRandomArrayElements(DESCRIPTION_SENTENCES),
     name: 'Geneva',
-    pictures: [
-      {
-        src: `https://loremflickr.com/248/152?random=${randomPic}`,
-        description: 'Aliquam erat volutpat. Nunc fermentum tortor ac porta dapibus. In rutrum ac purus sit amet tempus.'
-      }
-    ]
+    pictures: generateDestinationPictures()
   },
   {
     id: 3,
-    description: 'Fusce tristique felis at fermentum pharetra.Aliquam erat volutpat.',
+    description: getRandomArrayElements(DESCRIPTION_SENTENCES),
     name: 'Amsterdam',
-    pictures: [
-      {
-        src: `https://loremflickr.com/248/152?random=${randomPic}`,
-        description: 'Aliquam id orci ut lectus varius viverra. Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante.'
-      }
-    ]
+    pictures: generateDestinationPictures()
   }
 ];
 
-//Моки для точек
 
-const mockPoints = [
-  {
-    'id': 0,
-    'basePrice': 1100,
-    'dateFrom': '2019-07-10T22:55:56.845Z',
-    'dateTo': '2019-07-11T11:22:13.375Z',
-    'destination': getRandomArrayElement(mockDestination).id,
-    'offers': [
-      mockOffers[0].id,
-      mockOffers[1].id,
-      mockOffers[4].id,
-      mockOffers[6].id
-    ],
-    'type': TYPES[0]
-  },
-  {
-    'id': 1,
-    'basePrice': 900,
-    'dateFrom': '2019-07-10T22:55:56.845Z',
-    'dateTo': '2019-07-11T11:22:13.375Z',
-    'destination': getRandomArrayElement(mockDestination).id,
-    'offers': [
-      mockOffers[2].id
-    ],
-    'type': TYPES[1]
-  },
-  {
-    'id': 2,
-    'basePrice': 500,
-    'dateFrom': '2019-07-10T22:55:56.845Z',
-    'dateTo': '2019-07-11T11:22:13.375Z',
-    'destination': getRandomArrayElement(mockDestination).id,
-    'offers': [
-      mockOffers[1].id,
-      mockOffers[2].id,
-      mockOffers[3].id,
-    ],
-    'type': TYPES[2]
-  },
-  {
-    'id': 3,
-    'basePrice': 1400,
-    'dateFrom': '2019-07-10T22:55:56.845Z',
-    'dateTo': '2019-07-11T11:22:13.375Z',
-    'destination': getRandomArrayElement(mockDestination).id,
-    'offers': [
-      mockOffers[2].id,
-      mockOffers[3].id
-    ],
-    'type': TYPES[3]
-  },
-  {
-    'id': 4,
-    'basePrice': 650,
-    'dateFrom': '2019-07-10T22:55:56.845Z',
-    'dateTo': '2019-07-11T11:22:13.375Z',
-    'destination': getRandomArrayElement(mockDestination).id,
-    'offers': [
-      mockOffers[4].id,
-      mockOffers[6].id
-    ],
-    'type': TYPES[4]
-  },
-  {
-    'id': 5,
-    'basePrice': 1700,
-    'dateFrom': '2019-07-10T22:55:56.845Z',
-    'dateTo': '2019-07-11T11:22:13.375Z',
-    'destination': getRandomArrayElement(mockDestination).id,
-    'offers': [
-      mockOffers[2].id,
-      mockOffers[3].id,
-      mockOffers[5].id
-    ],
-    'type': TYPES[5]
-  },
-  {
-    'id': 6,
-    'basePrice': 800,
-    'dateFrom': '2019-07-10T22:55:56.845Z',
-    'dateTo': '2019-07-11T11:22:13.375Z',
-    'destination': getRandomArrayElement(mockDestination).id,
-    'offers': [
-      mockOffers[7].id,
-      mockOffers[8].id
-    ],
-    'type': TYPES[6]
-  },
-  {
-    'id': 7,
-    'basePrice': 600,
-    'dateFrom': '2019-07-10T22:55:56.845Z',
-    'dateTo': '2019-07-11T11:22:13.375Z',
-    'destination': getRandomArrayElement(mockDestination).id,
-    'offers': [
-      mockOffers[9].id,
-      mockOffers[3].id
-    ],
-    'type': TYPES[7]
-  },
-  {
-    'id': 8,
-    'basePrice': 500,
-    'dateFrom': '2019-07-10T22:55:56.845Z',
-    'dateTo': '2019-07-11T11:22:13.375Z',
-    'destination': getRandomArrayElement(mockDestination).id,
-    'offers': [
-      mockOffers[10].id,
-      mockOffers[11].id
-    ],
-    'type': TYPES[8]
-  }
-];
+const makeRandomPoint = (_, index) => {
+  const date = +(new Date());
+  const dateFrom = new Date(date - randomInt(TIME_MIN_OFFSET, TIME_MAX_OFFSET));
+  const dateTo = new Date(+dateFrom + randomInt(TIME_MIN_OFFSET, TIME_MAX_OFFSET));
+  const id = `${index}`;
+  const pointType = getRandomArrayElement(POINT_TYPES);
+  const selectedOffers = mockOffersByType.find( ({type}) => type === pointType);
+  const randomOffers = (selectedOffers) ? getRandomArrayElements(selectedOffers?.offers || []) : [];
+  const randomOfferIDs = randomOffers.map((offer) => offer.id);
+  return {
+    id,
+    basePrice: randomInt(POINT_MIN_BASE_PRICE, POINT_MAX_BASE_PRICE),
+    dateFrom: dateFrom.toISOString(),
+    dateTo: dateTo.toISOString(),
+    destination: getRandomArrayElement(mockDestinations).id,
+    offers: randomOfferIDs,
+    type: pointType
+  };
+};
 
-const getRandomPoint = () => (getRandomArrayElement(mockPoints));
+const mockPoints = Array.from({length: POINTS_COUNT}, makeRandomPoint);
 
-export {mockPoints, mockOffers, mockDestination, offersByTypes, getRandomPoint};
+export {mockOffers, mockDestinations, mockOffersByType, mockPoints};
 

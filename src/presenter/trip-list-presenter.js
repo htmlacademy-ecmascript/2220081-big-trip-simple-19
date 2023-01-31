@@ -14,17 +14,21 @@ export default class TripListPresenter {
   }
 
   init() {
-    this.listPoints = [...this.pointsModel.getPoints()];
+    const listPoints = [...this.pointsModel.getPoints()];
+
+    const offersByType = [...this.pointsModel.getOffersByType()];
+
+    const destinations = [...this.pointsModel.getDestinations()];
 
     render(new ListSortView(), this.tripEventsContainer);
 
     render(this.tripListComponent, this.tripEventsContainer);
 
-    render(new AddNewPointView(), this.tripListComponent.getElement(), RenderPosition.AFTERBEGIN);
+    render(new AddNewPointView(offersByType, destinations), this.tripListComponent.getElement(), RenderPosition.AFTERBEGIN);
 
-    for (let i = 0; i < this.listPoints.length; i++) {
-      render(new TripPointView({point: this.listPoints[i]}), this.tripListComponent.getElement());
+    for (let i = 0; i < listPoints.length; i++) {
+      render(new TripPointView(listPoints[i], destinations, offersByType), this.tripListComponent.getElement());
     }
-    render(new EditPointView(this.listPoints[0]), this.tripListComponent.getElement(), RenderPosition.AFTERBEGIN);
+    render(new EditPointView(listPoints[0], offersByType, destinations), this.tripListComponent.getElement(), RenderPosition.AFTERBEGIN);
   }
 }
