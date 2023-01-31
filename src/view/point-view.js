@@ -20,7 +20,7 @@ function createOffersTemplate(pointOffersIDs, offersData, pointType) {
 }
 
 function createPointTemplate(pointData, destinationsData, offersData) {
-  const {basePrice, dateFrom, dateTo, destination: destinationId, offers, type} = pointData;
+  const { basePrice, dateFrom, dateTo, destination: destinationId, offers, type } = pointData;
   const destination = destinationsData.find((dest) => destinationId === dest.id);
 
   return (
@@ -54,6 +54,7 @@ function createPointTemplate(pointData, destinationsData, offersData) {
 }
 
 export default class TripPointView {
+  #element = null;
 
   constructor(pointData, destinationsData, offersData) {
     this.pointData = pointData;
@@ -62,19 +63,19 @@ export default class TripPointView {
   }
 
 
-  getTemplate() {
+  get template() {
     return createPointTemplate(this.pointData, this.destinationsData, this.offersData);
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
     }
 
-    return this.element;
+    return this.#element;
   }
 
   removeElement() {
-    this.element = null;
+    this.#element = null;
   }
 }
