@@ -1,4 +1,4 @@
-import { getRandomArrayElement, randomInt, getRandomArrayElements } from '../utils.js';
+import { getRandomArrayElement, randomInt, getRandomArrayElements } from '../utils/common.js';
 import { POINT_TYPES } from '../const.js';
 
 const POINT_MIN_BASE_PRICE = 0;
