@@ -1,6 +1,6 @@
-import { createElement } from '../render.js';
-import { humanizeFormatDate } from '../utils.js';
+import AbstractView from '../framework/view/abstract-view.js';
 import { TIME_FULL_FORMAT, POINT_TYPES } from '../const.js';
+import { humanizeFormatDate } from '../utils/point.js';
 
 function createSelectTypeTemplate(currentType) {
   return `${
@@ -131,28 +131,35 @@ function createEditPointTemplate(point, offersByType, destinations) {
   );
 }
 
-export default class EditPointView {
-  #element = null;
+export default class EditPointView extends AbstractView{
+  #handleEditClick = null;
+  #handleFormSubmit = null;
 
-  constructor(point, destinations, offersByType) {
+  constructor({point, destinations, offersByType, onEditClick, onFormSubmit}) {
+    super();
     this.point = point;
     this.offersByType = offersByType;
     this.destinations = destinations;
+    this.#handleEditClick = onEditClick;
+    this.#handleFormSubmit = onFormSubmit;
+
+    this.element.querySelector('.event__rollup-btn')
+      .addEventListener('click', this.#editToPointHandler);
+    this.element.querySelector('form')
+      .addEventListener('submit', this.#formSubmitHandler);
   }
 
   get template() {
     return createEditPointTemplate(this.point, this.offersByType, this.destinations);
   }
 
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
+  #editToPointHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleEditClick();
+  };
 
-    return this.#element;
-  }
-
-  removeElement() {
-    this.#element = null;
-  }
+  #formSubmitHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleFormSubmit();
+  };
 }

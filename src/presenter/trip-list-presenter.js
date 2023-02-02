@@ -1,10 +1,10 @@
-import { render } from '../render.js';
+import { render , replace} from '../framework/render.js';
 import TripListView from '../view/trip-list-view.js';
 import ListSortView from '../view/list-sort-view.js';
 import EditPointView from '../view/edit-point-view.js';
 import TripPointView from '../view/point-view.js';
 import ListEmptyView from '../view/trip-list-empty-view.js';
-import { isEscape } from '../utils.js';
+import { isEscape } from '../utils/common.js';
 
 export default class TripListPresenter {
   #tripEventsContainer = null;
@@ -40,35 +40,42 @@ export default class TripListPresenter {
 
   #renderTripPoint(point, destinations, offersByType) {
 
-    const pointComponent = new TripPointView(point, destinations, offersByType);
-    const editPointComponent = new EditPointView(point, destinations, offersByType);
-
-    const replaceEditToPoint = () => {
-      this.#tripListComponent.element.replaceChild(pointComponent.element, editPointComponent.element);
-    };
-
-    const replacePointToEdit = () => {
-      this.#tripListComponent.element.replaceChild(editPointComponent.element, pointComponent.element);
-      editPointComponent.element.querySelector('.event__rollup-btn').addEventListener('click', replaceEditToPoint, {once : true});
-      editPointComponent.element.querySelector('form').addEventListener('submit', editFormSubmitHandler, {once : true});
-      document.addEventListener('keydown', editFormEscHandler, {once : true});
-    };
-
-    function editFormEscHandler(evt) {
+    const editFormEscHandler = (evt) => {
       if (isEscape(evt)) {
-        replaceEditToPoint();
+        replaceEditToPoint.call(this);
       }
+    };
+
+    const pointComponent = new TripPointView ({
+      point,
+      destinations,
+      offersByType,
+      onPointClick: () => {
+        replacePointToEdit.call(this);
+        document.addEventListener('keydown', editFormEscHandler, {once : true});
+      }
+    });
+
+    const editPointComponent = new EditPointView ({
+      point,
+      destinations,
+      offersByType,
+      onEditClick: () => {
+        replaceEditToPoint.call(this);
+      },
+      onFormSubmit: () => {
+        replaceEditToPoint.call(this);
+      }
+    });
+
+    function replaceEditToPoint() {
+      replace(pointComponent, editPointComponent);
     }
 
-    function editFormSubmitHandler(evt) {
-      evt.preventDefault();
-      replaceEditToPoint();
+    function replacePointToEdit() {
+      replace(editPointComponent, pointComponent);
     }
-
-    pointComponent.element.querySelector('.event__rollup-btn').addEventListener('click', replacePointToEdit);
 
     render(pointComponent, this.#tripListComponent.element);
-
   }
-
 }
