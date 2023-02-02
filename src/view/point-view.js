@@ -1,5 +1,5 @@
-import { createElement } from '../render.js';
-import { humanizeFormatDate } from '../utils.js';
+import AbstractView from '../framework/view/abstract-view.js';
+import { humanizeFormatDate } from '../utils/common.js';
 import { DATE_FORMAT, TIME_FORMAT } from '../const.js';
 
 function createOffersTemplate(pointOffersIDs, offersData, pointType) {
@@ -53,29 +53,27 @@ function createPointTemplate(pointData, destinationsData, offersData) {
   );
 }
 
-export default class TripPointView {
-  #element = null;
+export default class TripPointView extends AbstractView {
+  #handlePointToEdit = null;
 
-  constructor(pointData, destinationsData, offersData) {
-    this.pointData = pointData;
-    this.destinationsData = destinationsData;
-    this.offersData = offersData;
+  constructor({point, destinations, offersByType, onPointClick}) {
+    super();
+    this.point = point;
+    this.destinations = destinations;
+    this.offersByType = offersByType;
+    this.#handlePointToEdit = onPointClick;
+
+    this.element.querySelector('.event__rollup-btn')
+      .addEventListener('click', this.#onPointToEditHandler);
   }
 
 
   get template() {
-    return createPointTemplate(this.pointData, this.destinationsData, this.offersData);
+    return createPointTemplate(this.point, this.destinations, this.offersByType);
   }
 
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
-  }
-
-  removeElement() {
-    this.#element = null;
-  }
+  #onPointToEditHandler = (evt) => {
+    evt.preventDefault();
+    this.#handlePointToEdit();
+  };
 }

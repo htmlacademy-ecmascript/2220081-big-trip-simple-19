@@ -1,14 +1,6 @@
-import dayjs from 'dayjs';
-
-
 const getRandomArrayElement = function(items) {
   return (items[Math.floor(Math.random() * items.length)]);
 };
-
-
-function humanizeFormatDate(date, format) {
-  return dayjs(date).format(format);
-}
 
 function getRandomArrayElements(arr) {
   return arr.filter(() => getRandomBoolean());
@@ -30,4 +22,4 @@ const randomInt = (a = 1, b = 0) => {
 };
 
 
-export {getRandomArrayElement, humanizeFormatDate , randomInt, getRandomArrayElements, getRandomBoolean, isEscape};
+export {getRandomArrayElement, randomInt, getRandomArrayElements, getRandomBoolean, isEscape};

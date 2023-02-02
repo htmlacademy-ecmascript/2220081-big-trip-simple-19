@@ -1,6 +1,6 @@
-import { createElement } from '../render.js';
+import AbstractView from '../framework/view/abstract-view.js';
 import { POINT_TYPES } from '../const.js';
-import { humanizeFormatDate } from '../utils.js';
+import { humanizeFormatDate } from '../utils/point.js';
 import { TIME_FULL_FORMAT } from '../const.js';
 
 
@@ -105,25 +105,15 @@ function createAddNewPointTemplate(offersByType, destinations) {
   );
 }
 
-export default class AddNewPointView {
-  #element = null;
+export default class AddNewPointView extends AbstractView{
+
   constructor(offersByType, destinations) {
+    super();
     this.offersByType = offersByType;
     this.destinations = destinations;
   }
 
   get template() {
     return createAddNewPointTemplate(this.offersByType, this.destinations);
-  }
-
-  get element() {
-    if(!this.#element) {
-      this.#element = createElement(this.template);
-    }
-    return this.#element;
-  }
-
-  removeElement() {
-    this.#element = null;
   }
 }
