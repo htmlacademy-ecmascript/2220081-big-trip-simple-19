@@ -1,4 +1,4 @@
-import { getRandomArrayElement, randomInt, getRandomArrayElements } from '../utils.js';
+import { getRandomArrayElement, randomInt, getRandomArrayElements, getRandomBoolean } from '../utils/common.js';
 import { POINT_TYPES } from '../const.js';
 
 const POINT_MIN_BASE_PRICE = 0;
@@ -6,8 +6,7 @@ const POINT_MAX_BASE_PRICE = 5000;
 const POINTS_COUNT = 5;
 const DESTINATION_MIN_PHOTOS_COUNT = 0;
 const DESTINATION_MAX_PHOTOS_COUNT = 5;
-const TIME_MIN_OFFSET = 60 * 60 * 24 * 3 * 1000;
-const TIME_MAX_OFFSET = 60 * 60 * 24 * 7 * 1000;
+const TIME_OFFSET = 60 * 60 * 24 * 3 * 1000;
 const DESCRIPTION_SENTENCES = [
   'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
   'Cras aliquet varius magna, non porta ligula feugiat eget.',
@@ -189,8 +188,8 @@ const mockDestinations = [
 
 const makeRandomPoint = (_, index) => {
   const date = +(new Date());
-  const dateFrom = new Date(date - randomInt(TIME_MIN_OFFSET, TIME_MAX_OFFSET));
-  const dateTo = new Date(+dateFrom + randomInt(TIME_MIN_OFFSET, TIME_MAX_OFFSET));
+  const dateFrom = new Date(date + randomInt(-TIME_OFFSET, TIME_OFFSET));
+  const dateTo = new Date(+dateFrom + randomInt(-TIME_OFFSET, TIME_OFFSET));
   const id = `${index}`;
   const pointType = getRandomArrayElement(POINT_TYPES);
   const selectedOffers = mockOffersByType.find( ({type}) => type === pointType);
