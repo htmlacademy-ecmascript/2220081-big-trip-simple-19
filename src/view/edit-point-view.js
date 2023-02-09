@@ -5,8 +5,8 @@ import { humanizeFormatDate } from '../utils/point.js';
 function createSelectTypeTemplate(currentType) {
   return `${
     POINT_TYPES.map((type) => `<div class="event__type-item">
-    <input id="event-type-${type}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}">
-    <label class="event__type-label  event__type-label--${type}" for="event-type-${type}-1" ${currentType === type ? 'checked' : ''}>${type}</label>
+    <input id="event-type-${type}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}" ${currentType === type ? 'checked' : ''}>
+    <label class="event__type-label  event__type-label--${type}" for="event-type-${type}-1" >${type}</label>
   </div>`).join('')
   }`;
 }
