@@ -1,5 +1,6 @@
-import { getRandomArrayElement, randomInt, getRandomArrayElements, getRandomBoolean } from '../utils/common.js';
+import { getRandomArrayElement, randomInt, getRandomArrayElements } from '../utils/common.js';
 import { POINT_TYPES } from '../const.js';
+import { nanoid } from 'nanoid';
 
 const POINT_MIN_BASE_PRICE = 0;
 const POINT_MAX_BASE_PRICE = 5000;
@@ -186,11 +187,11 @@ const mockDestinations = [
 ];
 
 
-const makeRandomPoint = (_, index) => {
+const makeRandomPoint = () => {
   const date = +(new Date());
   const dateFrom = new Date(date + randomInt(-TIME_OFFSET, TIME_OFFSET));
   const dateTo = new Date(+dateFrom + randomInt(-TIME_OFFSET, TIME_OFFSET));
-  const id = `${index}`;
+  const id = nanoid();
   const pointType = getRandomArrayElement(POINT_TYPES);
   const selectedOffers = mockOffersByType.find( ({type}) => type === pointType);
   const randomOffers = (selectedOffers) ? getRandomArrayElements(selectedOffers?.offers || []) : [];

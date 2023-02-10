@@ -1,81 +1,96 @@
-import { render , replace} from '../framework/render.js';
+import { render } from '../framework/render.js';
 import TripListView from '../view/trip-list-view.js';
 import ListSortView from '../view/list-sort-view.js';
-import EditPointView from '../view/edit-point-view.js';
-import TripPointView from '../view/point-view.js';
 import ListEmptyView from '../view/trip-list-empty-view.js';
-import { isEscape } from '../utils/common.js';
+import PointPresenter from './point-presenter.js';
+import { updateItem } from '../utils/common.js';
+
 
 export default class TripListPresenter {
   #tripEventsContainer = null;
   #tripListComponent = new TripListView();
   #tripEmptyListComponent = new ListEmptyView();
+  #sortComponent = new ListSortView();
   #pointsModel = null;
+  #offersModel = null;
+  #destinationsModel = null;
+  #points = [];
+  #offersByType = [];
+  #destinations = [];
+  #pointPresenter = new Map();
 
-  constructor({tripEventsContainer, pointsModel}) {
+  constructor({tripEventsContainer, pointsModel, offersModel, destinationsModel}) {
     this.#tripEventsContainer = tripEventsContainer;
     this.#pointsModel = pointsModel;
+    this.#offersModel = offersModel;
+    this.#destinationsModel = destinationsModel;
   }
 
   init() {
-    const listPoints = [...this.#pointsModel.points];
+    this.#points = [...this.#pointsModel.points];
 
-    const offersByType = [...this.#pointsModel.offersByType];
+    this.#offersByType = [...this.#offersModel.offers];
 
-    const destinations = [...this.#pointsModel.destinations];
+    this.#destinations = [...this.#destinationsModel.destinations];
 
-    if (listPoints.length) {
-
-      render(new ListSortView(), this.#tripEventsContainer);
-
-      render(this.#tripListComponent, this.#tripEventsContainer);
-
-      for (let i = 0; i < listPoints.length; i++) {
-        this.#renderTripPoint(listPoints[i], destinations, offersByType);
-      }
-    } else {
-      render(this.#tripEmptyListComponent, this.#tripEventsContainer);
-    }
+    this.#renderBoard();
   }
 
-  #renderTripPoint(point, destinations, offersByType) {
+  #renderBoard() {
+    if (!this.#points.length) {
 
-    const editFormEscHandler = (evt) => {
-      if (isEscape(evt)) {
-        replaceEditToPoint.call(this);
-      }
-    };
+      this.#renderEmptyList();
 
-    const pointComponent = new TripPointView ({
-      point,
-      destinations,
-      offersByType,
-      onPointClick: () => {
-        replacePointToEdit.call(this);
-        document.addEventListener('keydown', editFormEscHandler, {once : true});
-      }
+      return;
+    }
+    this.#renderSort();
+
+    this.#renderPointList();
+
+  }
+
+  #handleModeChange = () => {
+    this.#pointPresenter.forEach((presenter) => presenter.resetView());
+  };
+
+  #handlePointChange = (updatePoint) => {
+    this.#points = updateItem(this.#points, updatePoint);
+    this.#pointPresenter.get(updatePoint.id).init(updatePoint);
+  };
+
+  #renderEmptyList() {
+    render(this.#tripEmptyListComponent, this.#tripEventsContainer);
+  }
+
+  #renderSort() {
+    render(this.#sortComponent, this.#tripEventsContainer);
+  }
+
+  #clearPointList() {
+    this.#pointPresenter.forEach((presenter) => presenter.destroy);
+    this.#pointPresenter.clear();
+  }
+
+  #renderPointList() {
+    render(this.#tripListComponent, this.#tripEventsContainer);
+    this.#renderPoints();
+  }
+
+  #renderPoints() {
+    this.#points
+      .forEach((point) => this.#renderPoint(point));
+  }
+
+  #renderPoint(point) {
+    const pointPresenter = new PointPresenter({
+      pointListContainer: this.#tripListComponent.element,
+      onDataChange: this.#handlePointChange,
+      onModeChange: this.#handleModeChange,
+      destinations: this.#destinations,
+      offersByType: this.#offersByType
     });
 
-    const editPointComponent = new EditPointView ({
-      point,
-      destinations,
-      offersByType,
-      onEditClick: () => {
-        replaceEditToPoint.call(this);
-      },
-      onFormSubmit: () => {
-        replaceEditToPoint.call(this);
-      }
-    });
-
-    function replaceEditToPoint() {
-      replace(pointComponent, editPointComponent);
-    }
-
-    function replacePointToEdit() {
-      replace(editPointComponent, pointComponent);
-    }
-
-    render(pointComponent, this.#tripListComponent.element);
+    pointPresenter.init(point);
+    this.#pointPresenter.set(point.id, pointPresenter);
   }
 }

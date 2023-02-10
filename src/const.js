@@ -1,5 +1,3 @@
-
-
 const DATE_FORMAT = 'MMM DD';
 const TIME_FORMAT = 'HH:mm';
 const TIME_FULL_FORMAT = 'DD/MM/YY HH:mm';

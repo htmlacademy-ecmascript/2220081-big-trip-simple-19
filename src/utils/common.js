@@ -21,5 +21,9 @@ const randomInt = (a = 1, b = 0) => {
   return Math.floor(lower + Math.random() * (upper - lower + 1));
 };
 
+function updateItem(items, update) {
+  return items.map((item) => item.id === update.id ? update : item);
+}
 
-export {getRandomArrayElement, randomInt, getRandomArrayElements, getRandomBoolean, isEscape};
+
+export {getRandomArrayElement, randomInt, getRandomArrayElements, getRandomBoolean, isEscape, updateItem};

@@ -1,12 +1,14 @@
 import AbstractView from '../framework/view/abstract-view.js';
 import { TIME_FULL_FORMAT, POINT_TYPES } from '../const.js';
 import { humanizeFormatDate } from '../utils/point.js';
+import { getDestinationById } from '../utils/destinations.js';
+import { getTypeOffers } from '../utils/offers.js';
 
-function createSelectTypeTemplate(currentType) {
+function createSelectTypeTemplate(currentType, pointId) {
   return `${
     POINT_TYPES.map((type) => `<div class="event__type-item">
-    <input id="event-type-${type}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}" ${currentType === type ? 'checked' : ''}>
-    <label class="event__type-label  event__type-label--${type}" for="event-type-${type}-1" >${type}</label>
+    <input id="event-type-${type}-${pointId}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}" ${currentType === type ? 'checked' : ''}>
+    <label class="event__type-label  event__type-label--${type}" for="event-type-${type}-${pointId}">${type}</label>
   </div>`).join('')
   }`;
 }
@@ -16,7 +18,7 @@ function selectDestinationListTemplate(destinations) {
 }
 
 function createOffersTemplate(pointOffers, offersByType, offerType, pointId) {
-  const typeOffers = offersByType.find(({type}) => type === offerType);
+  const typeOffers = getTypeOffers(offersByType, offerType);
   return (typeOffers)
     ? typeOffers.offers.map(({id, title, price}) => {
       const checked = (pointOffers.includes(id)) ? 'checked' : '';
@@ -58,8 +60,7 @@ function createPhotosTemplate(destination) {
 
 function createEditPointTemplate(point, offersByType, destinations) {
   const {basePrice, dateFrom, dateTo, destination: destinationId, offers, type, id } = point;
-  const destination = destinations.find((dest) => destinationId === dest.id);
-
+  const destination = getDestinationById(destinations, destinationId);
   return (
     `<li class="trip-events__item">
       <form class="event event--edit" action="#" method="post">
@@ -74,7 +75,7 @@ function createEditPointTemplate(point, offersByType, destinations) {
             <div class="event__type-list">
               <fieldset class="event__type-group">
                 <legend class="visually-hidden">Event type</legend>
-                ${createSelectTypeTemplate(type)}
+                ${createSelectTypeTemplate(type, id)}
               </fieldset>
             </div>
           </div>
@@ -134,12 +135,15 @@ function createEditPointTemplate(point, offersByType, destinations) {
 export default class EditPointView extends AbstractView{
   #handleEditClick = null;
   #handleFormSubmit = null;
+  #point = null;
+  #offersByType = null;
+  #destinations = null;
 
   constructor({point, destinations, offersByType, onEditClick, onFormSubmit}) {
     super();
-    this.point = point;
-    this.offersByType = offersByType;
-    this.destinations = destinations;
+    this.#point = point;
+    this.#offersByType = offersByType;
+    this.#destinations = destinations;
     this.#handleEditClick = onEditClick;
     this.#handleFormSubmit = onFormSubmit;
 
@@ -150,7 +154,7 @@ export default class EditPointView extends AbstractView{
   }
 
   get template() {
-    return createEditPointTemplate(this.point, this.offersByType, this.destinations);
+    return createEditPointTemplate(this.#point, this.#offersByType, this.#destinations);
   }
 
   #editToPointHandler = (evt) => {
@@ -160,6 +164,6 @@ export default class EditPointView extends AbstractView{
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
-    this.#handleFormSubmit();
+    this.#handleFormSubmit(this.#point);
   };
 }
