@@ -1,14 +1,16 @@
 import AbstractView from '../framework/view/abstract-view.js';
-import { humanizeFormatDate } from '../utils/common.js';
+import { humanizeFormatDate } from '../utils/point.js';
 import { DATE_FORMAT, TIME_FORMAT } from '../const.js';
+import { getDestinationById } from '../utils/destinations.js';
+import { getTypeOffers } from '../utils/offers.js';
 
 function createOffersTemplate(pointOffersIDs, offersData, pointType) {
-  const offersByType = offersData.find(({type}) => type === pointType);
   if(pointOffersIDs.length === 0) {
     return `<li class="event__offer">
     <span class="event__offer-title">No additional offers</span>
     </li>`;
   }
+  const offersByType = getTypeOffers(offersData, pointType);
   return pointOffersIDs.map((offerID) => {
     const offer = offersByType.offers.find(({id}) => id === offerID);
     return `<li class="event__offer">
@@ -19,9 +21,9 @@ function createOffersTemplate(pointOffersIDs, offersData, pointType) {
   }).join('');
 }
 
-function createPointTemplate(pointData, destinationsData, offersData) {
+function createPointTemplate(pointData, offersData, destinations) {
   const { basePrice, dateFrom, dateTo, destination: destinationId, offers, type } = pointData;
-  const destination = destinationsData.find((dest) => destinationId === dest.id);
+  const destination = getDestinationById(destinations, destinationId);
 
   return (
     `<li class="trip-events__item">
@@ -55,13 +57,14 @@ function createPointTemplate(pointData, destinationsData, offersData) {
 
 export default class TripPointView extends AbstractView {
   #handlePointToEdit = null;
+  #destinations = null;
 
-  constructor({point, destinations, offersByType, onPointClick}) {
+  constructor({point, offersByType, onPointClick, destinations}) {
     super();
     this.point = point;
-    this.destinations = destinations;
     this.offersByType = offersByType;
     this.#handlePointToEdit = onPointClick;
+    this.#destinations = destinations;
 
     this.element.querySelector('.event__rollup-btn')
       .addEventListener('click', this.#onPointToEditHandler);
@@ -69,7 +72,7 @@ export default class TripPointView extends AbstractView {
 
 
   get template() {
-    return createPointTemplate(this.point, this.destinations, this.offersByType);
+    return createPointTemplate(this.point, this.offersByType, this.#destinations);
   }
 
   #onPointToEditHandler = (evt) => {
