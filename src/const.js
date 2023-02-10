@@ -8,4 +8,9 @@ const FilterType = {
   FUTURE: 'future',
 };
 
-export { DATE_FORMAT, TIME_FORMAT, TIME_FULL_FORMAT, POINT_TYPES, FilterType};
+const SortType = {
+  DAY: 'day',
+  PRICE: 'price',
+};
+
+export { DATE_FORMAT, TIME_FORMAT, TIME_FULL_FORMAT, POINT_TYPES, FilterType, SortType};
